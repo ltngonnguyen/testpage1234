@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Deputy Roster Confirm</title>
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 0; background-color: #f4f4f4; color: #333; padding-bottom: 100px; }
+        header { background-color: #fff; padding: 15px 20px; border-bottom: 1px solid #ddd; text-align: center; }
+        header img { height: 30px; }
+        .container { max-width: 700px; margin: 20px auto; padding: 0 15px; }
+        .__roster-block { background-color: #fff; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 25px; }
+        .__roster-block .__title { font-size: 1.1em; font-weight: 600; padding: 15px; margin: 0; border-bottom: 1px solid #eee; }
+        .schedule-shift-confirm-list-module-card { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f0f0f0; }
+        .schedule-shift-confirm-list-module-card:last-child { border-bottom: none; }
+        .__left p { margin: 2px 0; }
+        .__time-date { font-weight: 600; font-size: 0.95em; }
+        .__company-area { font-size: 0.9em; color: #555; }
+        .__actions button {
+            padding: 8px 12px;
+            margin-left: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .__actions button.claim-btn { background-color: #28a745; color: white; border-color: #28a745;}
+        .__actions button.decline-btn { background-color: #dc3545; color: white; border-color: #dc3545;}
+        .__actions button:hover { opacity: 0.8; }
+        .__actions button:disabled { background-color: #ccc; border-color: #bbb; cursor: not-allowed; }
+        .loading-message, .no-shifts-message { text-align: center; padding: 20px; color: #777; }
+        .dialog-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .dialog-box {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            text-align: center;
+            min-width: 300px;
+        }
+        .dialog-box p { margin-bottom: 20px; }
+        .dialog-box button { padding: 10px 20px; }
+        .footer { text-align: center; margin-top: 30px; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://via.placeholder.com/150x30.png?text=DeputyLogo" alt="Deputy Logo">
+    </header>
+
+    <div class="container">
+        <h3 style="text-align: center; color: #555;">Your Shift Confirmation</h3>
+
+        <div class="__roster-block" id="upcoming-shifts-block">
+            <h4 class="__title">Upcoming shifts</h4>
+            <div id="upcoming-shifts-list">
+                </div>
+        </div>
+
+        <div class="__roster-block" id="available-shifts-block" style="display: none;">
+            <h4 class="__title">Available shifts</h4>
+            <div id="available-shifts-list">
+                </div>
+            <div id="available-shifts-loader" class="loading-message">
+                <p>Loading available shifts...</p>
+            </div>
+        </div>
+        <div id="no-available-shifts-message" class="no-shifts-message" style="display: none;">
+            <p>No available shifts at the moment. Please check back later.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button>Login to Deputy</button>
+    </div>
+
+    <div id="already-claimed-dialog" class="dialog-overlay">
+        <div class="dialog-box">
+            <p>This shift has already been claimed by another team member.</p>
+            <button id="already-claimed-ok-btn">OK</button>
+        </div>
+    </div>
+
+    <div id="error-reload-dialog" class="dialog-overlay">
+        <div class="dialog-box">
+            <p>An error occurred while claiming the shift. Please reload the page and try again.</p>
+            <button id="error-dialog-reload-btn">Reload Page</button>
+        </div>
+    </div>
+
+    <script>
+        const upcomingShiftsList = document.getElementById('upcoming-shifts-list');
+        const availableShiftsBlock = document.getElementById('available-shifts-block');
+        const availableShiftsList = document.getElementById('available-shifts-list');
+        const availableShiftsLoader = document.getElementById('available-shifts-loader');
+        const noAvailableShiftsMessage = document.getElementById('no-available-shifts-message');
+
+        const alreadyClaimedDialog = document.getElementById('already-claimed-dialog');
+        const errorReloadDialog = document.getElementById('error-reload-dialog');
+
+        let loadCount = 0; // Counter for loadAvailableShifts calls
+
+        document.getElementById('already-claimed-ok-btn').addEventListener('click', () => {
+            alreadyClaimedDialog.style.display = 'none';
+        });
+        document.getElementById('error-dialog-reload-btn').addEventListener('click', () => {
+            errorReloadDialog.style.display = 'none';
+            console.log("DIALOG ACTION: Simulating Page Reload due to dialog.");
+            loadAvailableShifts(); 
+        });
+
+        function createShiftCard(shift, isAvailable = false) {
+            const card = document.createElement('div');
+            card.className = 'schedule-shift-confirm-list-module-card';
+            card.dataset.shiftId = shift.id; 
+
+            const leftDiv = document.createElement('div');
+            leftDiv.className = '__left';
+            const timeDateP = document.createElement('p');
+            timeDateP.className = '__time-date';
+            timeDateP.textContent = shift.timeDate;
+            const companyAreaP = document.createElement('p');
+            companyAreaP.className = '__company-area';
+            companyAreaP.textContent = shift.area;
+            leftDiv.appendChild(timeDateP);
+            leftDiv.appendChild(companyAreaP);
+
+            const rightDiv = document.createElement('div');
+            rightDiv.className = '__right';
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = '__actions';
+
+            if (isAvailable) {
+                const openShiftInfoDiv = document.createElement('div');
+                openShiftInfoDiv.className = '__open-shift';
+                
+                if (shift.availableCount) {
+                    const availableCountDiv = document.createElement('div');
+                    availableCountDiv.className = '__total-open-shifts';
+                    availableCountDiv.textContent = `${shift.availableCount} available`;
+                    openShiftInfoDiv.appendChild(availableCountDiv);
+                }
+
+                const claimButton = document.createElement('button');
+                claimButton.textContent = 'Claim';
+                claimButton.className = 'claim-btn';
+                claimButton.addEventListener('click', () => handleClaim(shift, card, claimButton));
+                
+                const declineButton = document.createElement('button');
+                declineButton.textContent = 'Decline';
+                declineButton.className = 'decline-btn';
+                
+                openShiftInfoDiv.appendChild(declineButton); 
+                openShiftInfoDiv.appendChild(claimButton);
+                actionsDiv.appendChild(openShiftInfoDiv);
+            }
+            rightDiv.appendChild(actionsDiv);
+
+            card.appendChild(leftDiv);
+            card.appendChild(rightDiv);
+            return card;
+        }
+
+        function handleClaim(shift, cardElement, claimButtonElement) {
+            console.log(`MOCK ACTION: Attempting to claim shift: ${shift.id} - ${shift.timeDate}`);
+            
+            const outcomeRoll = Math.random();
+            claimButtonElement.disabled = true; 
+            claimButtonElement.textContent = 'Processing...';
+
+            setTimeout(() => { 
+                if (shift.id === 'error-shift-1' || (shift.id.startsWith("avail-") && outcomeRoll < 0.33)) {
+                    console.log(`MOCK RESULT (Shift ${shift.id}): Already Claimed`);
+                    alreadyClaimedDialog.style.display = 'flex';
+                    claimButtonElement.textContent = 'Claim (Failed)';
+                    claimButtonElement.style.backgroundColor = 'grey';
+                } else if (shift.id === 'error-shift-2' || (shift.id.startsWith("avail-") && outcomeRoll < 0.66)) {
+                    console.log(`MOCK RESULT (Shift ${shift.id}): Error, Reload Dialog`);
+                    errorReloadDialog.style.display = 'flex';
+                    claimButtonElement.textContent = 'Claim (Error)';
+                    claimButtonElement.style.backgroundColor = 'orange';
+                } else {
+                    console.log(`MOCK RESULT (Shift ${shift.id}): Successfully Claimed (card will disappear)`);
+                    cardElement.classList.add('hidden'); 
+                }
+            }, 300 + Math.random() * 700); // Shortened processing time: 0.3 to 1 second
+        }
+
+        const sampleUpcomingShifts = [
+            { id: 'up-1', timeDate: 'Mon 26 May 9:00 am - 5:00 pm ICT', area: 'General Office Duty' },
+            { id: 'up-2', timeDate: 'Tue 27 May 1:00 pm - 4:00 pm ICT', area: 'Client Meeting Support' }
+        ];
+
+        function loadUpcomingShifts() {
+            upcomingShiftsList.innerHTML = ''; 
+            sampleUpcomingShifts.forEach(shift => {
+                upcomingShiftsList.appendChild(createShiftCard(shift, false));
+            });
+        }
+        
+        let availableShiftData = [];
+
+        function generateAvailableShifts() {
+            availableShiftData = []; 
+            const days = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
+            const areas = ["GLOBO-Shift-Vietnamese-Core", "GLOBO-Shift-Spanish-Support", "GLOBO-Shift-French-Desk"];
+            const baseDate = new Date(2025, 4, 24); 
+
+            const numShifts = Math.floor(Math.random() * 28) + 3; // 3 to 10 available shifts
+
+            for (let i = 0; i < numShifts; i++) {
+                const dayOffset = Math.floor(Math.random() * 7);
+                const shiftDate = new Date(baseDate);
+                shiftDate.setDate(baseDate.getDate() + dayOffset + i); 
+
+                const startHourRoll = Math.random();
+                let startHour, endHour, ampm;
+
+                if (startHourRoll < 0.35) { 
+                    startHour = Math.floor(Math.random() * 7); 
+                    ampm = 'am';
+                } else if (startHourRoll < 0.7) { 
+                    startHour = Math.floor(Math.random() * 5) + 7; 
+                    ampm = 'am';
+                } else { 
+                    startHour = Math.floor(Math.random() * 11) + 1; 
+                    ampm = 'pm';
+                }
+                
+                let displayHour = startHour;
+                if (startHour === 0) displayHour = 12; 
+                else if (startHour > 12) displayHour = startHour - 12; 
+
+                endHour = startHour + (Math.floor(Math.random() * 3) + 2); 
+                let endAmpm = ampm;
+                let displayEndHour = endHour;
+
+                if (endHour >= 12 && startHour < 12) { 
+                    endAmpm = (ampm === 'am') ? 'pm' : 'am'; 
+                }
+                 if (endHour >= 24) {
+                    displayEndHour = endHour % 12 || 12; 
+                    if (startHour < 12 && endHour >= 24 && ampm === 'am') endAmpm = 'am';
+                    else if (startHour >=12 && endHour >=24 && ampm === 'pm') endAmpm = 'pm'; 
+                } else if (endHour > 12) {
+                     displayEndHour = endHour % 12 || 12;
+                } else if (endHour === 12 && ampm ==='am') { 
+                    endAmpm = 'pm';
+                } else if (endHour === 0) { 
+                    displayEndHour = 12;
+                }
+
+                const timeDateString = `${days[shiftDate.getDay()]} ${shiftDate.getDate()} ${shiftDate.toLocaleString('default', { month: 'short' })} ${displayHour.toString().padStart(2,'0')}:00 ${ampm} - ${displayEndHour.toString().padStart(2,'0')}:00 ${endAmpm} ICT`;
+                
+                let shiftId = `avail-${i + 1}-${Date.now()}`; 
+                if (i === 0 && Math.random() < 0.4) shiftId = 'error-shift-1'; 
+                if (i === 1 && Math.random() < 0.4) shiftId = 'error-shift-2'; 
+
+                availableShiftData.push({
+                    id: shiftId,
+                    timeDate: timeDateString,
+                    area: areas[Math.floor(Math.random() * areas.length)],
+                    availableCount: Math.floor(Math.random() * 3) + 1 
+                });
+            }
+        }
+
+        function loadAvailableShifts() {
+            loadCount++; // Increment load counter
+            console.log(`MOCK: loadAvailableShifts called - Count: ${loadCount}`);
+
+            availableShiftsList.innerHTML = ''; 
+            availableShiftsLoader.style.display = 'block';
+            noAvailableShiftsMessage.style.display = 'none';
+            availableShiftsBlock.style.display = 'block'; 
+
+            const delay = (Math.random() * 5000) + 1000; // 1 to 6 seconds delay
+            console.log(`MOCK: Simulating JIT load for available shifts. Delay: ${(delay / 1000).toFixed(1)}s`);
+
+            setTimeout(() => {
+                if (loadCount === 1) {
+                    console.log("MOCK: First load, showing no available shifts.");
+                    availableShiftData = [];
+                } else if (Math.random() < 0.20 && loadCount > 1) { // 20% chance of no shifts on subsequent loads
+                    console.log("MOCK: Subsequent load - RANDOMLY showing no available shifts this time.");
+                    availableShiftData = [];
+                } else {
+                    generateAvailableShifts(); 
+                }
+                
+                availableShiftsLoader.style.display = 'none';
+                if (availableShiftData.length > 0) {
+                    availableShiftData.forEach(shift => {
+                        availableShiftsList.appendChild(createShiftCard(shift, true));
+                    });
+                } else {
+                    noAvailableShiftsMessage.style.display = 'block';
+                }
+                console.log("MOCK: Available shifts (or no shifts message) rendered.");
+                document.dispatchEvent(new CustomEvent('availableShiftsLoaded'));
+
+            }, delay);
+        }
+
+        // Initial Load
+        loadUpcomingShifts();
+        loadAvailableShifts(); // Start loading available shifts (will be empty on first call)
+
+        const reloadButton = document.createElement('button');
+        reloadButton.textContent = 'Manually Reload Available Shifts (Test)';
+        reloadButton.style.margin = "20px auto";
+        reloadButton.style.display = "block";
+        reloadButton.addEventListener('click', loadAvailableShifts);
+        document.querySelector('.container').appendChild(reloadButton);
+
+    </script>
+</body>
+</html>
