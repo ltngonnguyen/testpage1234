@@ -159,6 +159,7 @@
             <div class="__roster-block">
                 <h4 class="__title">Available shifts</h4>
                 <div>
+                    <!-- Available Shifts -->
                     <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Tue 08 Jul 12:00 pm - 2:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
                     <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Tue 08 Jul 1:00 pm - 3:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
                     <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Tue 08 Jul 2:00 pm - 4:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
@@ -177,6 +178,7 @@
         </div>
     </div>
 
+    <!-- This div will be used for the modal dialog -->
     <div id="modal-container" style="display: none;"></div>
 
     <script>
@@ -184,8 +186,56 @@
             // Counter for claim button clicks
             let claimClickCount = 0;
 
-            // Select all claim buttons
-            const claimButtons = document.querySelectorAll('button.co-button');
+            // --- NEW: Function to randomize shift dates and times ---
+            function randomizeShiftTimes() {
+                const timeDateElements = document.querySelectorAll('p.__time-date');
+                const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                const formatTime = (date) => {
+                    let hours = date.getHours();
+                    let minutes = date.getMinutes();
+                    const ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12; // the hour '0' should be '12'
+                    minutes = minutes < 10 ? '0' + minutes : minutes;
+                    return `${hours}:${minutes} ${ampm}`;
+                };
+
+                timeDateElements.forEach(el => {
+                    // Generate a random date in the next 1 to 14 days
+                    const now = new Date();
+                    const randomDays = Math.floor(Math.random() * 14) + 1;
+                    now.setDate(now.getDate() + randomDays);
+
+                    // Generate a random start hour and minute (on the hour or half-hour)
+                    const startHour = Math.floor(Math.random() * 24);
+                    const startMinute = Math.random() < 0.5 ? 0 : 30;
+                    now.setHours(startHour, startMinute, 0, 0);
+                    
+                    const startDate = new Date(now);
+
+                    // Generate a random shift duration (1 to 4 hours)
+                    const durationHours = Math.floor(Math.random() * 4) + 1;
+                    const endDate = new Date(startDate.getTime() + durationHours * 60 * 60 * 1000);
+
+                    // Format the final string
+                    const day = dayNames[startDate.getDay()];
+                    const dateNum = startDate.getDate().toString().padStart(2, '0');
+                    const month = monthNames[startDate.getMonth()];
+                    const startTime = formatTime(startDate);
+                    const endTime = formatTime(endDate);
+
+                    el.textContent = `${day} ${dateNum} ${month} ${startTime} - ${endTime} EDT`;
+                });
+            }
+
+            // --- Run the randomization on page load ---
+            randomizeShiftTimes();
+
+
+            // Select all claim buttons within an __open-shift div
+            const claimButtons = document.querySelectorAll('div.__open-shift button.co-button');
 
             claimButtons.forEach(button => {
                 // Ensure we only attach listeners to actual "Claim" buttons
@@ -201,7 +251,7 @@
                             // Standard behavior: disable button and change text
                             this.disabled = true;
                             this.querySelector('span').textContent = 'Claimed!';
-                            this.style.backgroundColor = '#d4edda'; // Bootstrap success green
+                            this.style.backgroundColor = '#d4edda';
                             this.style.borderColor = '#c3e6cb';
                             this.style.cursor = 'not-allowed';
                         }
@@ -234,4 +284,3 @@
 
 </body>
 </html>
-```
