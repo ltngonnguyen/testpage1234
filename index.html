@@ -1,505 +1,255 @@
+Of course. Here is a single, static `index.html` file that you can upload to GitHub Pages to test your `ShiftClaimerBot` script.
+
+This page replicates the necessary structure, class names, and locators from your provided HTML. It also includes the requested dialog functionality.
+
+### \#\# How the Special Functionality Works:
+
+  * **JavaScript Logic**: When any "Claim" button is clicked, a counter is incremented.
+  * **Dialog Trigger**: If the counter is a multiple of 10, instead of changing the button text, it will display a modal dialog.
+  * **Blocking Interaction**: The dialog uses an overlay (`<div class="modal-overlay">`) that covers the entire page with a semi-transparent background, preventing clicks on any other element.
+  * **Reload Button**: The dialog contains a single "Reload" button which, when clicked, executes `location.reload()`, refreshing the page.
+
+-----
+
+### \#\# `index.html` (Complete File)
+
+You can copy the code below, save it as an `index.html` file, and upload it to your GitHub Pages repository.
+
+```html
 <!DOCTYPE html>
-<html lang="en" class="js canvas no-touch hashchange history rgba borderradius boxshadow opacity cssanimations cssgradients csstransforms csstransforms3d csstransitions localstorage no-applicationcache no-overflowscrolling placeholder pointerevents" dark="false" data-darkreader-mode="dynamic" data-darkreader-scheme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deputy Roster Confirm - Dynamic</title>
+    <title>Shift Claimer Test Page</title>
     <style>
-        /* Basic styles from your mock, adapted slightly */
-        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; margin: 0; background-color: #f9f9fb; color: #1e163c; padding-bottom: 100px; } /* Matched to some root styles */
-
-        /* Classes from download.html applied where possible */
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f9f9fb;
+            color: #1e163c;
+            margin: 0;
+            padding: 0;
+        }
+        .schedule-shift-confirm-list-module {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
         .__header {
-            background-color: #fff; /* From your mock, as download.html header bg is complex */
-            padding: 12px; /* from download.html .__header */
-            border-bottom: 1px solid #d8d7dc; /* from download.html .__header */
+            padding: 12px;
+            border-bottom: 1px solid #d8d7dc;
+            margin-bottom: 24px;
+        }
+        .__logo {
+            width: 100px;
+        }
+        .__container {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+        .__heading {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 400;
+            color: #6c6a72;
             text-align: center;
         }
-        .__header .__logo {
-            width: 100px; /* from download.html .__logo */
-            height: auto; /* Maintain aspect ratio */
-        }
-        .schedule-shift-confirm-list-module { /* Main wrapper from download.html */
-            margin:0;
-            font-family: var(--co-font-primary); /* Assuming var(--co-font-primary) is defined elsewhere or defaults to body font */
-        }
-        .__container { /* Used for centering content, from download.html */
+        .__roster-block {
             display: flex;
             flex-direction: column;
-            gap: 32px; /* from download.html .__container */
-            width: auto;
-            padding-top: 24px; /* from download.html .__container */
-            margin: 0 auto;
-            max-width: 700px; /* Your original container width */
+            gap: 16px;
         }
-        .__heading { /* General heading style from download.html */
-            margin:0;
-            font-size:16px;
-            font-style:normal;
-            font-weight:400;
-            line-height:24px;
-            color: var(--co-text-secondary, #555); /* Using var or fallback */
-            text-align:center;
+        .__title {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            font-weight: 600;
         }
-        .__roster-block { /* from download.html */
-            background-color: #fff; /* Your mock style */
-            border: 1px solid #e0e0e0; /* Your mock style */
-            border-radius: 8px; /* Your mock style */
-            margin-bottom: 25px;
+        .schedule-shift-confirm-list-module-card {
             display: flex;
-            flex-direction: column;
-            gap: 0; /* download.html .__roster-block has gap:24px, but your structure is different */
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #d8d7dc;
         }
-        .__roster-block .__title { /* from download.html */
-            margin:0 16px; /* from download.html .__title */
-            font-size:16px; /* from download.html .__title */
-            font-style:normal;
-            font-weight:600;
-            line-height:24px;
-            color: var(--co-text-primary, #333); /* Using var or fallback */
-            padding: 15px; /* Your mock style for padding */
-            border-bottom: 1px solid #eee; /* Your mock style */
+        .__left p {
+            margin: 0;
+            padding: 0;
         }
-        .schedule-shift-confirm-list-module-card { /* from download.html */
+        p.__time-date {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        p.__company-area {
+            font-size: 14px;
+            color: #6c6a72;
+        }
+        .__actions {
             display: flex;
-            flex-direction: column; /* Default for mobile in download.html */
-            gap: 8px; /* from download.html card */
-            padding: 16px; /* from download.html card */
-            margin:0;
-            font-family: var(--co-font-primary);
-            border-bottom: 1px solid rgba(216,215,220,.5019607843137255); /* from download.html card */
+            align-items: center;
+            gap: 16px;
         }
-        .schedule-shift-confirm-list-module-card:last-child {
-            border-bottom: none;
+        .__open-shift {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
-
-        /* Styles for card content based on download.html and your mock */
-        .schedule-shift-confirm-list-module-card .__left p { margin: 2px 0; }
-        .schedule-shift-confirm-list-module-card .__time-date { /* from download.html card */
-            margin:0;
-            font-size:14px;
-            font-style:normal;
-            font-weight:600;
-            line-height:20px;
-            color: var(--co-text-primary, #333);
-        }
-        .schedule-shift-confirm-list-module-card .__company-area { /* from download.html card */
-            margin:0;
-            font-size:14px;
-            font-style:normal;
-            font-weight:400;
-            line-height:20px;
-            color: var(--co-text-primary, #555); /* download.html uses primary, your mock used #555 */
-        }
-        .schedule-shift-confirm-list-module-card .__right {
-             min-width: 175px; /* For larger screens from download.html */
-             text-align: right; /* For larger screens from download.html */
-        }
-        .schedule-shift-confirm-list-module-card .__actions { /* from download.html card */
-             /* download.html .__actions is more complex, this is a simplified version */
-        }
-        .schedule-shift-confirm-list-module-card .__actions .co-button { /* General button style from download.html */
+        .co-button {
             display: inline-flex;
             justify-content: center;
             align-items: center;
-            padding: 8px 12px; /* Your mock's padding */
-            margin-left: 8px; /* Your mock's margin */
-            border: 1px solid #ccc; /* Fallback border */
-            border-radius: 8px; /* co-button general radius */
+            padding: 8px 16px;
+            border: 1px solid #6c6a72;
+            border-radius: 8px;
+            background-color: #f0f0f0;
             cursor: pointer;
-            font-size: 0.9em; /* Your mock's font size */
-            line-height: 1;
-            background-color: var(--co-button-secondary-fill, #f0f0f0); /* Fallback for co-button--default */
-            color: var(--co-button-text-highlight, #3D1CBA); /* Fallback for co-button--default */
-        }
-
-        /* Specific claim/decline button styles (your original styles) */
-        .schedule-shift-confirm-list-module-card .__actions .claim-btn { background-color: #28a745; color: white; border-color: #28a745;}
-        .schedule-shift-confirm-list-module-card .__actions .decline-btn { background-color: #dc3545; color: white; border-color: #dc3545;}
-        .schedule-shift-confirm-list-module-card .__actions .co-button:hover { opacity: 0.8; }
-        .schedule-shift-confirm-list-module-card .__actions .co-button:disabled {
-            background-color: var(--co-button-disabled-secondary-fill, #ccc) !important;
-            border-color: #bbb !important;
-            color: var(--co-text-secondary, #777) !important;
-            cursor: not-allowed !important;
-            opacity: 0.6 !important;
-        }
-         .schedule-shift-confirm-list-module-card .__open-shift { /* from download.html card */
-            display:flex;
-            flex-direction:row;
-            gap:16px;
-            align-items:center;
-        }
-        .schedule-shift-confirm-list-module-card .__total-open-shifts { /* from download.html card */
-            text-align:center;
-            font-size:14px;
-            font-style:normal;
-            font-weight:400;
-            line-height:20px;
-            color: var(--co-text-secondary, #6c6a72);
-            margin-right: auto; /* Push buttons to the right */
-        }
-
-        /* Loading and messages */
-        .loading-message, .no-shifts-message { text-align: center; padding: 20px; color: #777; }
-
-        /* Dialog styles (your original styles, as these are custom) */
-        .dialog-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.6); /* Darker overlay */
-            display: none; justify-content: center; align-items: center; z-index: 2000; /* Higher z-index */
-        }
-        .dialog-box {
-            background-color: white; padding: 25px; border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25); text-align: center; min-width: 320px;
-        }
-        .dialog-box p { margin-bottom: 20px; font-size: 1.05em; }
-        .dialog-box button {
-            padding: 10px 25px;
-            border: none;
-            border-radius: 5px;
-            background-color: #3D1CBA; /* Matching co-button-primary-fill */
-            color: white;
-            cursor: pointer;
-            font-size: 1em;
-        }
-        .dialog-box button:hover { opacity: 0.9; }
-
-
-        .__footer { /* from download.html */
-            padding: 24px 0;
-            margin: 0;
+            font-weight: 500;
+            font-size: 14px;
+            min-width: 82px;
             text-align: center;
         }
-        .__footer .co-button { /* General button style from download.html */
-            display: inline-flex;
-            padding: 8px 16px;
-            border: 1px solid #ccc; /* Fallback border */
-            border-radius: 8px; /* co-button general radius */
-            cursor: pointer;
-            font-size: 1em;
-            line-height: 1.5;
-            background-color: var(--co-button-secondary-fill, #f0f0f0);
-            color: var(--co-button-text-highlight, #3D1CBA);
+        .co-button:hover {
+            background-color: #e0e0e0;
         }
-        .__footer .co-button a {
-            text-decoration: none;
-            color: inherit;
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-
-        .hidden { display: none !important; }
-
-        /* Responsive adjustments from download.html card */
-        @media only screen and (min-width:394px){
-            .schedule-shift-confirm-list-module-card {
-                flex-direction:row;
-                gap:0;
-                justify-content:space-between;
-            }
-            .schedule-shift-confirm-list-module-card .__right {
-                min-width:auto; /* Adjusted from 175px for more flexibility */
-                text-align:right
-            }
-            .schedule-shift-confirm-list-module-card .__open-shift .co-button+.co-button {
-                margin-left:8px; /* Was 0 in download.html, keeping your 8px for better spacing */
-            }
-            .schedule-shift-confirm-list-module-card .__open-shift {
-                justify-content:flex-end;
-            }
+        .modal-dialog {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            z-index: 1001;
         }
-         @media only screen and (max-width:620px){ /* From download.html */
-            .__header { text-align:center }
-            .__container { width:inherit }
+        .modal-dialog p {
+            margin: 0 0 20px 0;
+            font-size: 16px;
         }
-        @media (min-width:394px){ /* From download.html */
-            .__container{width:600px}
-        }
-
-
     </style>
 </head>
 <body>
+
     <div class="schedule-shift-confirm-list-module">
         <div class="__header">
-            <img class="__logo" src="https://933bba13123200.na.deputy.com/assets/images/logos/logo-dark-new.svg" alt="Deputy Logo">
+            <img class="__logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgNDAiPjxwYXRoIGZpbGw9IiMzMzI5NUUiIGQ9Ik0xMy4xIDMzLjZoMi4ydi0xLjdoLTIuMnptMy4xLTEuN2gyLjJ2Mi4yaC0yLjJ6bS0zLjEtNC40aDIuMnYyLjJoLTIuMnptMy4xIDBoMi4ydjIuMmgtMi4yem0tMy4xLTQuNGgyLjJ2Mi4yaC0yLjJ6bTMuMSAwaDIuMnYyLjJoLTIuMnptLTguOC00LjRoMi4ydjIuMmgtMi4yem04LjggMGgyLjJ2Mi4yaC0yLjJ6bS04LjgtMy4zaDIuMnYyLjJoLTIuMnptOC44IDBoMi4ydjIuMmgtMi4yem0tNS43IDBoMi4ydjIuMmgtMi4yem0tMy4xIDEyLjFoMi4ydjIuMmgtMi4yem0wLTQuNGgyLjJ2Mi4yaC0yLjJ6bTAtNC40aDIuMnYyLjJoLTIuMnptMCA0LjRoMi4ydjIuMmgtMi4yem0wLTguOGgyLjJ2Mi4yaC0yLjJ6bTAtNC40aDIuMnYyLjJoLTIuMnptMTcuNi0xLjFoMi4ydjIuMmgtMi4yem0wIDQuNGgyLjJ2Mi4yaC0yLjJ6bTAtNC40aDIuMnYyLjJoLTIuMnptLTguOCA0LjRoMi4ydjIuMmgtMi4yem04LjggNGg0LjR2Mi4yaC00LjR6bTAtOC44aDIuMnYyLjJoLTIuMnptMC00LjRoMi4ydjIuMmgtMi4yem0wIDEzLjJoMi4ydjIuMmgtMi4yem0wLTQuNGgyLjJ2Mi4yaC0yLjJ6bS04LjggNC40aDIuMnYyLjJoLTIuMnptMC0xMy4yaDIuMnYyLjJoLTIuMnptMCA0LjRoMi4ydjIuMmgtMi4yem0wLTguOGgyLjJ2Mi4yaC0yLjJ6bS00LjQgOC44aDIuMnYyLjJoLTIuMnptMCA0LjRoMi4ydjIuMmgtMi4yem0wLTQuNGgyLjJ2Mi4yaC0yLjJ6bTAtNC40aDIuMnYyLjJoLTIuMnptNDEgNy44aDIuMlYxMWgtMi4yem0zLjMgMGgyLjJWMTEuaC0yLjJ6bS0zLjMtMy4zaDIuMlYxMWgtMi4yem0zLjMgMGgyLjJWMTEuaC0yLjJ6bTUuNS02LjZoMi4ydjIuMmgtMi4yem0wIDMuM2gyLjJ2Mi4yaC0yLjJ6bTMuMy0zLjNoMi4ydjIuMmgtMi4yem0wIDMuM2gyLjJ2Mi4yaC0yLjJ6bS0zLjMgMy4zaDIuMnYyLjJoLTIuMnptMy4zIDBoMi4ydjIuMmgtMi4yem0wIDMuM2gyLjJ2Mi4yaC0yLjJ6bTMuMy0zLjNoMi4ydjIuMmgtMi4yem0wIDMuM2gyLjJ2Mi4yaC0yLjJ6bTQuNC0xMy4yaDIuMnYyLjJoLTIuMnptMy4zIDBoMi4ydjIuMmgtMi4yem0tMy4zIDMuM2gyLjJ2Mi4yaC0yLjJ6bTMuMyAwaDIuMnYyLjJoLTIuMnptLTYuNiAzaDIuMnYyLjJoLTIuMnptNi42IDBoMi4ydjIuMmgtMi4yem0tMy4zIDMuM2gyLjJ2Mi4yaC0yLjJ6bTMuMyAwaDIuMnYyLjJoLTIuMnptMCAzLjNoMi4ydjIuMmgtMi4yem0tNi42IDNoMi4ydjIuMmgtMi4yem0zLjMgM2gyLjJ2Mi4yaC0yLjJ6bTYuNiAwaDIuMnYyLjJoLTIuMnptMy4zIDBoMi4ydjIuMmgtMi4yem0tMy4zLTMuM2gyLjJ2Mi4yaC0yLjJ6bTMuMyAwaDIuMnYyLjJoLTIuMnptMCAzLjNoMi4ydjIuMmgtMi4yem0zLjMgM2gyLjJ2Mi4yaC0yLjJ6bTIuMi0zLjNoMi4ydjIuMmgtMi4yem0wLTYuNmgyLjJ2Mi4yaC0yLjJ6bTAgMy4zaDIuMnYyLjJoLTIuMnptMCAzLjNoMi4ydjIuMmgtMi4yem0zLjMtMy4zaDIuMnYyLjJoLTIuMnptLTYuNi0zLjNoMi4ydjIuMmgtMi4yem0zLjMgMGgyLjJ2Mi4yaC0yLjJ6bTguOC0zLjNoMi4ydjIuMmgtMi4yem0tOS45IDEzLjJoMi4ydjIuMmgtMi4yem0tMy4zIDBoMi4ydjIuMmgtMi4yem02LjYtMy4zaDIuMnYyLjJoLTIuMnptMCAzLjNoMi4ydjIuMmgtMi4yem02LjYtMTMuMmgzLjN2Mi4yaC0zLjN6Ii8+PC9zdmc+">
         </div>
-
         <div class="__container">
-            <p class="__heading">Your upcoming shifts</p> <div class="__roster-block" id="upcoming-shifts-block">
+            <p class="__heading">Your upcoming shifts</p>
+            <div class="__roster-block">
                 <h4 class="__title">Upcoming shifts</h4>
-                <div id="upcoming-shifts-list">
+                <div>
+                    <div class="schedule-shift-confirm-list-module-card">
+                        <div class="__left">
+                            <p class="__time-date">Tue 08 Jul 11:00 am - 12:00 pm EDT</p>
+                            <p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p>
+                        </div>
                     </div>
-            </div>
-
-            <div class="__roster-block" id="available-shifts-block" style="display: none;">
-                <h4 class="__title">Available shifts</h4>
-                <div id="available-shifts-list">
+                    <div class="schedule-shift-confirm-list-module-card">
+                        <div class="__left">
+                            <p class="__time-date">Wed 09 Jul 11:00 am - 12:00 pm EDT</p>
+                            <p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p>
+                        </div>
                     </div>
-                <div id="available-shifts-loader" class="loading-message">
-                    <p>Loading available shifts...</p>
+                    <div class="schedule-shift-confirm-list-module-card">
+                        <div class="__left">
+                            <p class="__time-date">Fri 11 Jul 7:00 am - 9:00 am EDT</p>
+                            <p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div id="no-available-shifts-message" class="no-shifts-message" style="display: none;">
-                <p>No available shifts at the moment. Please check back later.</p>
+            <div class="__roster-block">
+                <h4 class="__title">Available shifts</h4>
+                <div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Tue 08 Jul 12:00 pm - 2:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Tue 08 Jul 1:00 pm - 3:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Tue 08 Jul 2:00 pm - 4:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Tue 08 Jul 3:00 pm - 5:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Tue 08 Jul 4:00 pm - 6:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Wed 09 Jul 12:00 pm - 2:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Wed 09 Jul 1:00 pm - 3:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Wed 09 Jul 2:00 pm - 4:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Wed 09 Jul 3:00 pm - 5:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Wed 09 Jul 4:00 pm - 6:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Thu 10 Jul 7:00 am - 9:00 am EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Thu 10 Jul 2:00 pm - 4:00 pm EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                    <div class="schedule-shift-confirm-list-module-card"><div class="__left"><p class="__time-date">Fri 11 Jul 1:00 am - 3:00 am EDT</p><p class="__company-area">GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core</p></div><div class="__right"><div class="__actions"><div class="__open-shift"><button class="co-button"><span>Claim</span></button></div></div></div></div>
+                </div>
             </div>
-
-            <button id="manual-reload-button" class="co-button co-button--default" style="margin: 20px auto; display: block;">Manually Reload Available Shifts (Test)</button>
-        </div>
-
-        <div class="__footer">
-            <button class="co-button co-button--default" type="button">
-                <a href="https://933bba13123200.na.deputy.com">Login to Deputy</a>
-            </button>
         </div>
     </div>
 
-
-    <div id="already-claimed-dialog" class="dialog-overlay">
-        <div class="dialog-box">
-            <p>Shift Already Claimed</p>
-            <p style="font-size: 0.9em; color: #555;">This shift has already been claimed by another team member.</p>
-            <button id="already-claimed-ok-btn" class="co-button co-button--primary">OK</button>
-        </div>
-    </div>
-
-    <div id="error-reload-dialog" class="dialog-overlay">
-        <div class="dialog-box">
-            <p>Shift Claim Error</p>
-            <p style="font-size: 0.9em; color: #555;">An error occurred while claiming the shift. Please reload the page and try again.</p>
-            <button id="error-dialog-reload-btn" class="co-button co-button--primary">Reload Page</button>
-        </div>
-    </div>
+    <div id="modal-container" style="display: none;"></div>
 
     <script>
-        const upcomingShiftsList = document.getElementById('upcoming-shifts-list');
-        const availableShiftsBlock = document.getElementById('available-shifts-block');
-        const availableShiftsList = document.getElementById('available-shifts-list');
-        const availableShiftsLoader = document.getElementById('available-shifts-loader');
-        const noAvailableShiftsMessage = document.getElementById('no-available-shifts-message');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Counter for claim button clicks
+            let claimClickCount = 0;
 
-        const alreadyClaimedDialog = document.getElementById('already-claimed-dialog');
-        const errorReloadDialog = document.getElementById('error-reload-dialog');
-        const manualReloadButton = document.getElementById('manual-reload-button');
+            // Select all claim buttons
+            const claimButtons = document.querySelectorAll('button.co-button');
 
-        let loadAvailableShiftsCallCount = 0;
+            claimButtons.forEach(button => {
+                // Ensure we only attach listeners to actual "Claim" buttons
+                if (button.querySelector('span')?.textContent.trim() === 'Claim') {
+                    button.addEventListener('click', function(event) {
+                        event.preventDefault(); // Prevent any default form submission
+                        claimClickCount++;
 
-        document.getElementById('already-claimed-ok-btn').addEventListener('click', () => {
-            alreadyClaimedDialog.style.display = 'none';
-        });
-        document.getElementById('error-dialog-reload-btn').addEventListener('click', () => {
-            errorReloadDialog.style.display = 'none';
-            console.log("DIALOG ACTION: Simulating Page Reload due to 'Shift Claim Error' dialog.");
-            // In a real scenario, you might do: window.location.reload();
-            // For this mock, we'll just re-trigger the load of available shifts.
-            loadAvailableShifts();
-        });
-        manualReloadButton.addEventListener('click', loadAvailableShifts);
-
-
-        function createShiftCard(shift, isAvailable = false) {
-            const card = document.createElement('div');
-            card.className = 'schedule-shift-confirm-list-module-card'; // Matched
-            card.dataset.shiftId = shift.id;
-
-            const leftDiv = document.createElement('div');
-            leftDiv.className = '__left'; // Matched
-            const timeDateP = document.createElement('p');
-            timeDateP.className = '__time-date'; // Matched
-            timeDateP.textContent = shift.timeDate;
-            const companyAreaP = document.createElement('p');
-            companyAreaP.className = '__company-area'; // Matched
-            companyAreaP.textContent = shift.area;
-            leftDiv.appendChild(timeDateP);
-            leftDiv.appendChild(companyAreaP);
-
-            const rightDiv = document.createElement('div');
-            rightDiv.className = '__right'; // Matched
-            const actionsDiv = document.createElement('div');
-            actionsDiv.className = '__actions'; // Matched
-
-            if (isAvailable) {
-                const openShiftInfoDiv = document.createElement('div');
-                openShiftInfoDiv.className = '__open-shift'; // Matched
-
-                if (shift.availableCount) {
-                    const availableCountDiv = document.createElement('div');
-                    availableCountDiv.className = '__total-open-shifts'; // Matched
-                    availableCountDiv.textContent = `${shift.availableCount} available`;
-                    openShiftInfoDiv.appendChild(availableCountDiv);
-                }
-
-                const declineButton = document.createElement('button');
-                declineButton.textContent = 'Decline';
-                declineButton.className = 'co-button co-button--default decline-btn'; // Matched general, kept specific
-                declineButton.addEventListener('click', () => {
-                    console.log(`MOCK ACTION: Declined shift: ${shift.id}`);
-                    card.style.opacity = '0.5';
-                    declineButton.disabled = true;
-                    claimButton.disabled = true;
-                });
-
-                const claimButton = document.createElement('button');
-                claimButton.textContent = 'Claim';
-                claimButton.className = 'co-button co-button--default claim-btn'; // Matched general, kept specific
-                claimButton.addEventListener('click', () => handleClaim(shift, card, claimButton, declineButton));
-
-                openShiftInfoDiv.appendChild(declineButton);
-                openShiftInfoDiv.appendChild(claimButton);
-                actionsDiv.appendChild(openShiftInfoDiv);
-            }
-            rightDiv.appendChild(actionsDiv);
-
-            card.appendChild(leftDiv);
-            card.appendChild(rightDiv);
-            return card;
-        }
-
-        function handleClaim(shift, cardElement, claimButtonElement, declineButtonElement) {
-            console.log(`MOCK ACTION: Attempting to claim shift: ${shift.id} - ${shift.timeDate}`);
-
-            const outcomeRoll = Math.random();
-            claimButtonElement.disabled = true;
-            declineButtonElement.disabled = true; // Disable decline too
-            claimButtonElement.textContent = 'Processing...';
-
-            // Simulate API call delay
-            setTimeout(() => {
-                if (shift.id === 'error-shift-1' || (shift.id.startsWith("avail-") && outcomeRoll < 0.25)) { // 25% chance for "Already Claimed"
-                    console.log(`MOCK RESULT (Shift ${shift.id}): Already Claimed`);
-                    alreadyClaimedDialog.style.display = 'flex';
-                    claimButtonElement.textContent = 'Claim'; // Reset text
-                    claimButtonElement.style.backgroundColor = 'grey'; // Visually indicate failure
-                    // Do not re-enable decline button here as the shift is "gone"
-                } else if (shift.id === 'error-shift-2' || (shift.id.startsWith("avail-") && outcomeRoll < 0.5)) { // Another 25% chance for "Claim Error"
-                    console.log(`MOCK RESULT (Shift ${shift.id}): Error, Reload Dialog`);
-                    errorReloadDialog.style.display = 'flex';
-                    claimButtonElement.textContent = 'Claim (Error)';
-                    claimButtonElement.style.backgroundColor = 'orange'; // Visually indicate error
-                    // Keep buttons disabled, user needs to reload via dialog
-                } else { // Success
-                    console.log(`MOCK RESULT (Shift ${shift.id}): Successfully Claimed`);
-                    cardElement.innerHTML = '<p style="color: green; text-align: center; width: 100%;">Shift Claimed Successfully!</p>';
-                    // Optional: remove card after a delay
-                    setTimeout(() => cardElement.classList.add('hidden'), 1500);
-                }
-            }, 500 + Math.random() * 1000); // 0.5 to 1.5 seconds processing time
-        }
-
-        const sampleUpcomingShifts = [
-            { id: 'up-1', timeDate: 'Tue 20 May 12:00 pm - 2:00 pm EDT', area: 'GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core' },
-            { id: 'up-2', timeDate: 'Tue 20 May 2:00 pm - 4:00 pm EDT', area: 'GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core' },
-            { id: 'up-3', timeDate: 'Tue 20 May 4:00 pm - 6:00 pm EDT', area: 'GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core' },
-            { id: 'up-4', timeDate: 'Wed 21 May 1:00 pm - 3:00 pm EDT', area: 'GLOBO-Shift-Vietnamese-Core, GLOBO-Shift-Vietnamese-Core' },
-        ];
-
-        function loadUpcomingShifts() {
-            upcomingShiftsList.innerHTML = '';
-            sampleUpcomingShifts.forEach(shift => {
-                upcomingShiftsList.appendChild(createShiftCard(shift, false));
-            });
-        }
-
-        let availableShiftData = [];
-
-        function generateAvailableShiftsArray() {
-            const generatedShifts = [];
-            const days = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
-            const areas = ["GLOBO-Shift-Vietnamese-Core", "GLOBO-Shift-Spanish-Support", "GLOBO-Shift-French-Desk", "General Support", "Tier 2 Escalations"];
-            const baseDate = new Date(2025, 4, 24); // May 24, 2025
-
-            const numShifts = Math.floor(Math.random() * 21); // 0 to 20 shifts
-
-            for (let i = 0; i < numShifts; i++) {
-                const dayOffset = Math.floor(Math.random() * 7) + 1; // 1 to 7 days from base
-                const shiftDate = new Date(baseDate);
-                shiftDate.setDate(baseDate.getDate() + dayOffset + i); // Stagger dates
-
-                const startHourRoll = Math.random();
-                let startHour, endHour, ampm;
-
-                if (startHourRoll < 0.33) {      // Morning
-                    startHour = Math.floor(Math.random() * 4) + 7; // 7am - 10am
-                    ampm = 'am';
-                } else if (startHourRoll < 0.66) { // Afternoon
-                    startHour = Math.floor(Math.random() * 4) + 1;  // 1pm - 4pm
-                    ampm = 'pm';
-                } else {                         // Evening
-                    startHour = Math.floor(Math.random() * 4) + 5;  // 5pm - 8pm
-                    ampm = 'pm';
-                }
-
-                let displayStartHour = startHour;
-                if (startHour === 0) displayStartHour = 12; // Midnight
-                else if (startHour > 12) displayStartHour = startHour - 12; // PM conversion
-
-                const durationHours = Math.floor(Math.random() * 3) + 2; // 2, 3, or 4 hours
-                endHour = startHour + durationHours;
-                let endAmpm = ampm;
-                let displayEndHour = endHour;
-
-                if (endHour >= 12 && startHour < 12 && ampm === 'am') {
-                    endAmpm = 'pm';
-                }
-                if (endHour >= 24) { // Rolls over to next day AM
-                     displayEndHour = (endHour % 12 === 0) ? 12 : endHour % 12;
-                     endAmpm = 'am';
-                } else if (endHour > 12) {
-                    displayEndHour = (endHour % 12 === 0) ? 12 : endHour % 12;
-                } else if (endHour === 12 && ampm === 'am') {
-                    endAmpm = 'pm'; // Noon
-                }
-
-
-                const timeDateString = `${days[shiftDate.getDay()]} ${shiftDate.getDate()} ${shiftDate.toLocaleString('default', { month: 'short' })} ${displayStartHour.toString().padStart(2,'0')}:00 ${ampm} - ${displayEndHour.toString().padStart(2,'0')}:00 ${endAmpm} ICT`;
-
-                let shiftId = `avail-${i + 1}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
-                // Pre-assign specific IDs for testing error dialogs if needed, otherwise random
-                if (i === 0 && numShifts > 0 && Math.random() < 0.15) shiftId = 'error-shift-1'; // Small chance for the first shift to be error-prone
-                if (i === 1 && numShifts > 1 && Math.random() < 0.15) shiftId = 'error-shift-2'; // Small chance for the second
-
-                generatedShifts.push({
-                    id: shiftId,
-                    timeDate: timeDateString,
-                    area: areas[Math.floor(Math.random() * areas.length)],
-                    availableCount: Math.floor(Math.random() * 3) + 1
-                });
-            }
-            return generatedShifts;
-        }
-
-        function loadAvailableShifts() {
-            loadAvailableShiftsCallCount++;
-            console.log(`LOAD_AVAILABLE_SHIFTS - Call count: ${loadAvailableShiftsCallCount}`);
-
-            availableShiftsList.innerHTML = ''; // Clear previous list
-            availableShiftsLoader.style.display = 'block';
-            noAvailableShiftsMessage.style.display = 'none';
-            availableShiftsBlock.style.display = 'block';
-
-            const delay = Math.random() * 2000; // 0 to 2 seconds delay
-            console.log(`Simulating API delay for available shifts: ${(delay / 1000).toFixed(2)}s`);
-
-            setTimeout(() => {
-                availableShiftData = generateAvailableShiftsArray(); // Generate new set of shifts
-                console.log(`Generated ${availableShiftData.length} available shifts.`);
-
-                availableShiftsLoader.style.display = 'none';
-                if (availableShiftData.length > 0) {
-                    availableShiftData.forEach(shift => {
-                        availableShiftsList.appendChild(createShiftCard(shift, true));
+                        // Every 10th click, show the dialog
+                        if (claimClickCount % 10 === 0) {
+                            showClaimedDialog();
+                        } else {
+                            // Standard behavior: disable button and change text
+                            this.disabled = true;
+                            this.querySelector('span').textContent = 'Claimed!';
+                            this.style.backgroundColor = '#d4edda'; // Bootstrap success green
+                            this.style.borderColor = '#c3e6cb';
+                            this.style.cursor = 'not-allowed';
+                        }
                     });
-                } else {
-                    noAvailableShiftsMessage.style.display = 'block';
                 }
-                console.log("Available shifts rendering complete.");
-                // You could dispatch a custom event here if other parts of the page need to know
-                // document.dispatchEvent(new CustomEvent('availableShiftsLoaded'));
-            }, delay);
-        }
+            });
 
-        // Initial Load
-        loadUpcomingShifts();
-        loadAvailableShifts();
+            function showClaimedDialog() {
+                const modalContainer = document.getElementById('modal-container');
+
+                const modalHTML = `
+                    <div class="modal-overlay">
+                        <div class="modal-dialog">
+                            <p>Shift already claimed</p>
+                            <button id="reload-button" class="co-button"><span>Reload</span></button>
+                        </div>
+                    </div>
+                `;
+
+                modalContainer.innerHTML = modalHTML;
+                modalContainer.style.display = 'block';
+
+                // Add event listener to the new reload button
+                document.getElementById('reload-button').addEventListener('click', function() {
+                    location.reload();
+                });
+            }
+        });
     </script>
+
 </body>
 </html>
+```
